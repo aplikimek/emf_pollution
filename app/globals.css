@@ -2,15 +2,83 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Dark theme (default) ───────────────────────────────────── */
 :root {
-  --bg: #04080f; --panel: #080f1a; --panel2: #0c1526; --border: #18304e;
-  --gold: #f5c842; --orange: #f06030; --green: #2ee89a; --blue: #38c0f5;
-  --red: #f03858; --dim: #305070; --text: #a8c8e0;
+  --bg:              #04080f;
+  --panel:           #080f1a;
+  --panel2:          #0c1526;
+  --border:          #18304e;
+  --dim:             #305070;
+  --text:            #a8c8e0;
+  --text-strong:     #ffffff;
+  --text-on-accent:  #000000;
+
+  --gold:            #f5c842;
+  --orange:          #f06030;
+  --green:           #2ee89a;
+  --blue:            #38c0f5;
+  --red:             #f03858;
+
+  --gold-tint:       rgba(245,200,66,0.12);
+  --gold-border:     rgba(245,200,66,0.3);
+  --gold-glow:       rgba(245,200,66,0.07);
+  --gold-glow-b:     rgba(245,200,66,0.2);
+  --green-tint:      rgba(46,232,154,0.12);
+  --green-border:    rgba(46,232,154,0.3);
+  --red-tint:        rgba(240,56,88,0.12);
+  --red-border:      rgba(240,56,88,0.3);
+  --blue-tint:       rgba(56,192,245,0.12);
+  --blue-border:     rgba(56,192,245,0.3);
 }
+
+/* ── Light theme ─────────────────────────────────────────────── */
+[data-theme="light"] {
+  --bg:              #f0f5f9;
+  --panel:           #ffffff;
+  --panel2:          #e6f0f7;
+  --border:          #c2d6e8;
+  --dim:             #6a8faa;
+  --text:            #1e3a52;
+  --text-strong:     #0a1828;
+  --text-on-accent:  #ffffff;
+
+  --gold:            #b88a0a;
+  --orange:          #c84010;
+  --green:           #1a8a58;
+  --blue:            #0d7aaa;
+  --red:             #c02040;
+
+  --gold-tint:       rgba(184,138,10,0.1);
+  --gold-border:     rgba(184,138,10,0.28);
+  --gold-glow:       rgba(184,138,10,0.08);
+  --gold-glow-b:     rgba(184,138,10,0.22);
+  --green-tint:      rgba(26,138,88,0.1);
+  --green-border:    rgba(26,138,88,0.28);
+  --red-tint:        rgba(192,32,64,0.1);
+  --red-border:      rgba(192,32,64,0.28);
+  --blue-tint:       rgba(13,122,170,0.1);
+  --blue-border:     rgba(13,122,170,0.28);
+}
+
+/* ── Base ────────────────────────────────────────────────────── */
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: #04080f; color: #a8c8e0; font-family: 'IBM Plex Mono', monospace; }
+body { background: var(--bg); color: var(--text); font-family: 'IBM Plex Mono', monospace; transition: background 0.25s, color 0.25s; }
+
 ::-webkit-scrollbar { width: 4px; height: 4px; }
-::-webkit-scrollbar-thumb { background: #18304e; border-radius: 2px; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* ── Project card ────────────────────────────────────────────── */
+.project-card {
+  background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
+  padding: 1.25rem; text-decoration: none; display: block;
+  transition: border-color 0.2s, box-shadow 0.2s; cursor: pointer;
+}
+.project-card:hover {
+  border-color: var(--gold-border);
+  box-shadow: 0 0 24px var(--gold-glow);
+}
+
+/* ── Leaflet ─────────────────────────────────────────────────── */
 .leaflet-container { background: #030810 !important; }
 .emf-popup .leaflet-popup-content-wrapper {
   background: transparent !important; padding: 0 !important;
@@ -19,12 +87,12 @@ body { background: #04080f; color: #a8c8e0; font-family: 'IBM Plex Mono', monosp
 .emf-popup .leaflet-popup-content { margin: 0 !important; }
 .emf-popup .leaflet-popup-tip-container { display: none; }
 .leaflet-popup-close-button { color: #305070 !important; top: 6px !important; right: 8px !important; }
-.project-card {
-  background: #080f1a; border: 1px solid #18304e; border-radius: 12px;
-  padding: 1.25rem; text-decoration: none; display: block;
-  transition: border-color 0.2s, box-shadow 0.2s; cursor: pointer;
+
+/* ── Theme toggle button ─────────────────────────────────────── */
+.theme-toggle {
+  width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border);
+  background: var(--panel2); color: var(--dim); font-size: 15px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: border-color 0.15s, color 0.15s;
 }
-.project-card:hover {
-  border-color: rgba(245,200,66,0.35);
-  box-shadow: 0 0 24px rgba(245,200,66,0.05);
-}
+.theme-toggle:hover { border-color: var(--gold-border); color: var(--gold); }

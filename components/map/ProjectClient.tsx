@@ -89,32 +89,32 @@ export default function ProjectClient({ project, initMeasurements, user, project
   }
 
   // ── Shared styles ─────────────────────────────────────────
-  const tabBtn = (a:boolean) => ({ width:44,height:44,borderRadius:10,display:'flex',alignItems:'center',justifyContent:'center',fontSize:18,cursor:'pointer',border:`1px solid ${a?'rgba(245,200,66,0.3)':'transparent'}`,background:a?'rgba(245,200,66,0.08)':'none',color:a?'#f5c842':'#305070',transition:'all 0.15s' } as const)
-  const fieldBtn = (a:boolean) => ({ padding:'3px 10px',borderRadius:6,border:`1px solid ${a?'rgba(245,200,66,0.35)':'transparent'}`,background:a?'rgba(245,200,66,0.1)':'none',color:a?'#f5c842':'#305070',fontSize:10,fontWeight:700,letterSpacing:1,textTransform:'uppercase' as const,cursor:'pointer' })
+  const tabBtn = (a: boolean) => ({ width:44,height:44,borderRadius:10,display:'flex',alignItems:'center',justifyContent:'center',fontSize:18,cursor:'pointer',border:`1px solid ${a?'var(--gold-border)':'transparent'}`,background:a?'var(--gold-glow)':'none',color:a?'var(--gold)':'var(--dim)',transition:'all 0.15s' } as const)
+  const fieldBtn = (a: boolean) => ({ padding:'3px 10px',borderRadius:6,border:`1px solid ${a?'var(--gold-border)':'transparent'}`,background:a?'var(--gold-tint)':'none',color:a?'var(--gold)':'var(--dim)',fontSize:10,fontWeight:700,letterSpacing:1,textTransform:'uppercase' as const,cursor:'pointer' })
 
   return (
     <div style={{ flex:1,display:'flex',flexDirection:'column',height:'100vh',overflow:'hidden' }}>
       {/* ── Header ── */}
-      <header style={{ flexShrink:0,height:52,background:'#080f1a',borderBottom:'1px solid #18304e',display:'flex',alignItems:'center',gap:12,padding:'0 1rem' }}>
-        <Link href="/dashboard" style={{ color:'#305070',textDecoration:'none',fontSize:18,lineHeight:1 }}>←</Link>
+      <header style={{ flexShrink:0,height:52,background:'var(--panel)',borderBottom:'1px solid var(--border)',display:'flex',alignItems:'center',gap:12,padding:'0 1rem' }}>
+        <Link href="/dashboard" style={{ color:'var(--dim)',textDecoration:'none',fontSize:18,lineHeight:1 }}>←</Link>
         <div style={{ width:30,height:30,borderRadius:8,background:'linear-gradient(135deg,#f5c842,#f06030)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:14 }}>⚡</div>
         <div>
-          <div style={{ fontFamily:"'Barlow Condensed',sans-serif",fontSize:16,fontWeight:700,color:'#fff',letterSpacing:1,lineHeight:1 }}>{project.name}</div>
-          <div style={{ fontSize:9,color:'#305070' }}>{meas.length} matje · {project.frequency} GHz · ICNIRP {limit} V/m</div>
+          <div style={{ fontFamily:"'Barlow Condensed',sans-serif",fontSize:16,fontWeight:700,color:'var(--text-strong)',letterSpacing:1,lineHeight:1 }}>{project.name}</div>
+          <div style={{ fontSize:9,color:'var(--dim)' }}>{meas.length} matje · {project.frequency} GHz · ICNIRP {limit} V/m</div>
         </div>
         <div style={{ display:'flex',gap:4,marginLeft:12 }}>
           {(['emax','eavg','emin'] as const).map(f=><button key={f} onClick={()=>setField(f)} style={fieldBtn(field===f)}>{f}</button>)}
         </div>
         <div style={{ marginLeft:'auto',display:'flex',alignItems:'center',gap:8 }}>
-          {uplMsg && <span style={{ fontSize:11,padding:'3px 10px',borderRadius:20,background:uplMsg.startsWith('⚠')?'rgba(240,56,88,0.1)':'rgba(46,232,154,0.1)',color:uplMsg.startsWith('⚠')?'#f03858':'#2ee89a' }}>{uplMsg}</span>}
+          {uplMsg && <span style={{ fontSize:11,padding:'3px 10px',borderRadius:20,background:uplMsg.startsWith('⚠')?'var(--red-tint)':'var(--green-tint)',color:uplMsg.startsWith('⚠')?'var(--red)':'var(--green)' }}>{uplMsg}</span>}
           {canEdit && (
-            <label style={{ display:'flex',alignItems:'center',gap:6,padding:'5px 12px',border:'1px solid rgba(56,192,245,0.3)',borderRadius:8,color:'#38c0f5',fontSize:11,cursor:upl?'not-allowed':'pointer',opacity:upl?0.5:1 }}>
+            <label style={{ display:'flex',alignItems:'center',gap:6,padding:'5px 12px',border:'1px solid var(--blue-border)',borderRadius:8,color:'var(--blue)',fontSize:11,cursor:upl?'not-allowed':'pointer',opacity:upl?0.5:1 }}>
               ⬆ {upl?'Ngarkim...':'Ngarko CSV'}
               <input type="file" accept=".csv" style={{ display:'none' }} onChange={handleCSV} disabled={upl} />
             </label>
           )}
           {isOwner && (
-            <button onClick={()=>setShowM(true)} style={{ padding:'5px 12px',border:'1px solid #18304e',borderRadius:8,color:'#305070',fontSize:11,background:'none',cursor:'pointer' }}>👥 Members</button>
+            <button onClick={()=>setShowM(true)} style={{ padding:'5px 12px',border:'1px solid var(--border)',borderRadius:8,color:'var(--dim)',fontSize:11,background:'none',cursor:'pointer' }}>👥 Members</button>
           )}
         </div>
       </header>
@@ -122,7 +122,7 @@ export default function ProjectClient({ project, initMeasurements, user, project
       {/* ── Content ── */}
       <div style={{ flex:1,display:'flex',overflow:'hidden' }}>
         {/* Tab icons */}
-        <div style={{ width:52,background:'#080f1a',borderRight:'1px solid #18304e',display:'flex',flexDirection:'column',alignItems:'center',padding:'10px 0',gap:4 }}>
+        <div style={{ width:52,background:'var(--panel)',borderRight:'1px solid var(--border)',display:'flex',flexDirection:'column',alignItems:'center',padding:'10px 0',gap:4 }}>
           {TABS.map(({id,ico,lbl})=><button key={id} onClick={()=>setTab(id)} title={lbl} style={tabBtn(tab===id)}>{ico}</button>)}
         </div>
 
