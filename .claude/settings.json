@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(npm install)",
+      "Bash(git init *)"
+    ],
+    "additionalDirectories": [
+      "c:\\Projekte\\emf_pollution\\emf_infomat.app\\{app"
+    ]
+  }
+}

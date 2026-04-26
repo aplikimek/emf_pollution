@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #04080f; --panel: #080f1a; --panel2: #0c1526; --border: #18304e;
+  --gold: #f5c842; --orange: #f06030; --green: #2ee89a; --blue: #38c0f5;
+  --red: #f03858; --dim: #305070; --text: #a8c8e0;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #04080f; color: #a8c8e0; font-family: 'IBM Plex Mono', monospace; }
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-thumb { background: #18304e; border-radius: 2px; }
+.leaflet-container { background: #030810 !important; }
+.emf-popup .leaflet-popup-content-wrapper {
+  background: transparent !important; padding: 0 !important;
+  border-radius: 10px !important; box-shadow: 0 8px 40px rgba(0,0,0,.8) !important;
+}
+.emf-popup .leaflet-popup-content { margin: 0 !important; }
+.emf-popup .leaflet-popup-tip-container { display: none; }
+.leaflet-popup-close-button { color: #305070 !important; top: 6px !important; right: 8px !important; }
