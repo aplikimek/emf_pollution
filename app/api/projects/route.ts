@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerUser } from '@/lib/auth'
-import { getProjectsForUser, createProject, getUserById } from '@/lib/store'
+import { getProjectsForUser, createProject } from '@/lib/store'
+import type { User } from '@/lib/store'
 
 const ICNIRP: Record<string, number> = {
   '0.9': 41.25, '1.8': 41.25, '2.4': 41.25, '3.5': 42.0, '5': 42.8,
@@ -25,9 +26,12 @@ export async function POST(req: NextRequest) {
 
   const freq  = parseFloat(frequency) || 2.4
   const limit = ICNIRP[String(frequency)] ?? 41.25
-  const dbUser = await getUserById(user.id)
-  if (!dbUser) return NextResponse.json({ error: 'User not found' }, { status: 404 })
 
-  const project = await createProject(name.trim(), description?.trim() || null, dbUser, freq, limit)
+  const owner: User = {
+    id: user.id, email: user.email, name: user.name,
+    image: user.image, role: user.role, clerkId: '', createdAt: '',
+  }
+
+  const project = await createProject(name.trim(), description?.trim() || null, owner, freq, limit)
   return NextResponse.json(project, { status: 201 })
 }
