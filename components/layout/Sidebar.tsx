@@ -18,6 +18,7 @@ export default function Sidebar({ user }: { user: SessionUser }) {
 
   const nav = [
     { href: '/dashboard',   icon: '🗂', label: 'Dashboard' },
+    { href: '/settings',    icon: '⚙',  label: 'Cilësimet' },
     ...(user.role === 'admin' ? [
       { href: '/admin/users', icon: '👥', label: 'Menaxhim Users' },
     ] : []),

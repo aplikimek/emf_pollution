@@ -1,0 +1,21 @@
+ID,Vendndodhja,Lat,Lng,Emax (V/m),Emes (V/m),Emin (V/m),Frekuenca,Lloji,Data,Operatori,Kufiri EU (V/m),Statusi
+1,Sheshi Skënderbej,41.3275,19.8187,28.4,14.2,3.1,900 MHz,EM,2025-03-15,Matesi A,41.2,Normal
+2,Blloku - Rruga e Elbasanit,41.315,19.82,35.6,18.9,4.5,1.8 GHz,EM,2025-03-15,Matesi A,58.3,Normal
+3,Kombinat - Pallati i Sportit,41.295,19.802,22.1,11.3,2.8,900 MHz,EM,2025-03-16,Matesi B,41.2,Normal
+4,Kamza - Qendra,41.381,19.768,18.7,9.4,2.1,900 MHz,EM,2025-03-16,Matesi B,41.2,Normal
+5,Don Bosko,41.34,19.836,41.8,22.5,6.1,1.8 GHz,EM,2025-03-17,Matesi A,58.3,I Lartë
+6,Laprakë - Stadiumi Qemal Stafa,41.355,19.822,31.2,16.1,3.9,2.1 GHz,EM,2025-03-17,Matesi C,61.4,Normal
+7,Kinostudio,41.326,19.808,26.8,13.5,3.2,900 MHz,EM,2025-03-18,Matesi A,41.2,Normal
+8,Selitë,41.301,19.801,15.3,7.8,1.9,900 MHz,EM,2025-03-18,Matesi B,41.2,Normal
+9,Astiri,41.311,19.857,33.7,17.2,4.4,1.8 GHz,EM,2025-03-19,Matesi C,58.3,Normal
+10,Sauk,41.305,19.873,19.2,9.7,2.3,900 MHz,EM,2025-03-19,Matesi A,41.2,Normal
+11,Farka,41.29,19.851,12.4,6.2,1.5,900 MHz,EM,2025-03-20,Matesi B,41.2,Normal
+12,Rruga Durrësit (Km 5),41.336,19.782,29.5,15,3.7,1.8 GHz,EM,2025-03-20,Matesi C,58.3,Normal
+13,Tirana East Gate,41.335,19.867,44.3,24.1,7.2,1.8 GHz,EM,2025-03-21,Matesi A,58.3,I Lartë
+14,Unaza e Re - Veri,41.361,19.813,38.1,20.2,5.6,900 MHz,EM,2025-03-21,Matesi B,41.2,I Lartë
+15,Ish-Blloku Industrial,41.292,19.818,23.6,12,2.9,2.1 GHz,EM,2025-03-22,Matesi C,61.4,Normal
+16,Rruga e Kavajës,41.318,19.802,36.4,19.5,5,1.8 GHz,EM,2025-03-22,Matesi A,58.3,Normal
+17,Kodra e Diellit,41.327,19.848,17.8,9,2.2,900 MHz,EM,2025-03-23,Matesi B,41.2,Normal
+18,Rruga Myslym Shyri,41.32,19.822,30.9,16,4.1,1.8 GHz,EM,2025-03-23,Matesi A,58.3,Normal
+19,Vora,41.39,19.722,11.2,5.7,1.4,900 MHz,EM,2025-03-24,Matesi C,41.2,Normal
+20,Paskuqan,41.373,19.795,25.6,13.1,3.3,900 MHz,EM,2025-03-24,Matesi B,41.2,Normal

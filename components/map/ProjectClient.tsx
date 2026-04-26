@@ -10,6 +10,7 @@ import ExportPanel   from '@/components/map/ExportPanel'
 import CrossVal      from '@/components/map/CrossVal'
 import MeasTable     from '@/components/map/MeasTable'
 import StatsCharts   from '@/components/charts/StatsCharts'
+import ReportsPanel  from '@/components/map/ReportsPanel'
 
 const GISMap = dynamic(() => import('@/components/map/GISMap'), {
   ssr: false,
@@ -21,11 +22,12 @@ const GISMap = dynamic(() => import('@/components/map/GISMap'), {
 })
 
 const TABS = [
-  {id:'map',    ico:'🗺', lbl:'Hartë'},
-  {id:'charts', ico:'📊', lbl:'Analiza'},
-  {id:'cv',     ico:'✓',  lbl:'Cross-Val'},
-  {id:'export', ico:'⬇',  lbl:'Export'},
-  {id:'table',  ico:'📋', lbl:'Tabelë'},
+  {id:'map',     ico:'🗺', lbl:'Hartë'},
+  {id:'charts',  ico:'📊', lbl:'Analiza'},
+  {id:'cv',      ico:'✓',  lbl:'Cross-Val'},
+  {id:'export',  ico:'⬇',  lbl:'Export'},
+  {id:'table',   ico:'📋', lbl:'Tabelë'},
+  {id:'reports', ico:'📑', lbl:'Raporte'},
 ]
 
 interface Props {
@@ -143,10 +145,11 @@ export default function ProjectClient({ project, initMeasurements, user, project
           <GISMap measurements={meas} project={project} activeField={field} method={method} idwPower={power} resolution={res} limit={limit} onGridComputed={(g,m)=>{setGrid(g);setMeta(m)}} />
         </div>
 
-        {tab==='charts' && <div style={{ flex:1,overflow:'auto',padding:'1rem' }}><StatsCharts measurements={meas} limit={limit} activeField={field} /></div>}
-        {tab==='cv'     && <div style={{ flex:1,overflow:'auto',padding:'1rem' }}><CrossVal measurements={meas} limit={limit} method={method} idwPower={power} /></div>}
-        {tab==='export' && <div style={{ flex:1,overflow:'auto',padding:'1rem' }}><ExportPanel measurements={meas} gridCache={grid} gridMeta={meta} project={project} limit={limit} /></div>}
-        {tab==='table'  && <div style={{ flex:1,overflow:'auto',padding:'1rem' }}><MeasTable measurements={meas} limit={limit} canEdit={canEdit} onDelete={handleDelete} /></div>}
+        {tab==='charts'  && <div style={{ flex:1,overflow:'auto',padding:'1rem' }}><StatsCharts measurements={meas} limit={limit} activeField={field} /></div>}
+        {tab==='cv'      && <div style={{ flex:1,overflow:'auto',padding:'1rem' }}><CrossVal measurements={meas} limit={limit} method={method} idwPower={power} /></div>}
+        {tab==='export'  && <div style={{ flex:1,overflow:'auto',padding:'1rem' }}><ExportPanel measurements={meas} gridCache={grid} gridMeta={meta} project={project} limit={limit} /></div>}
+        {tab==='table'   && <div style={{ flex:1,overflow:'auto',padding:'1rem' }}><MeasTable measurements={meas} limit={limit} canEdit={canEdit} onDelete={handleDelete} /></div>}
+        {tab==='reports' && <div style={{ flex:1,overflow:'auto' }}><ReportsPanel measurements={meas} project={project} limit={limit} /></div>}
       </div>
 
       {showM && <MembersModal projectId={project.id} ownerId={project.ownerId} currentUserId={user.id} onClose={()=>setShowM(false)} />}

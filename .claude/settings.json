@@ -4,7 +4,9 @@
       "PowerShell(npm install)",
       "Bash(git init *)",
       "Bash(git remote *)",
-      "Bash(git branch *)"
+      "Bash(git branch *)",
+      "Bash(git restore *)",
+      "Bash(node -e \"require\\('jspdf'\\); require\\('xlsx'\\); console.log\\('OK'\\)\")"
     ],
     "additionalDirectories": [
       "c:\\Projekte\\emf_pollution\\emf_infomat.app\\{app"

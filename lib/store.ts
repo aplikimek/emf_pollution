@@ -278,3 +278,28 @@ export async function deleteMeasurement(projectId: string, measurementId: string
   const all = await getMeasurements(projectId)
   await writeJSON(`measurements/${projectId}.json`, all.filter(m => m.id !== measurementId))
 }
+
+// ═══════════════════════════════════════════════════════════════
+// SETTINGS
+// ═══════════════════════════════════════════════════════════════
+
+export interface AppSettings {
+  city: string
+  icnirpLimits: { '900': number; '1800': number; '2100': number; default: number }
+  measurementTypes: { emf: boolean; airQuality: boolean; noise: boolean; radiation: boolean }
+}
+
+const DEFAULT_SETTINGS: AppSettings = {
+  city: 'Tiranë',
+  icnirpLimits: { '900': 41.2, '1800': 58.3, '2100': 61.4, default: 41.2 },
+  measurementTypes: { emf: true, airQuality: false, noise: false, radiation: false },
+}
+
+export async function getSettings(): Promise<AppSettings> {
+  return readJSON<AppSettings>('settings.json', DEFAULT_SETTINGS)
+}
+
+export async function saveSettings(s: Partial<AppSettings>): Promise<void> {
+  const current = await getSettings()
+  await writeJSON('settings.json', { ...current, ...s })
+}
