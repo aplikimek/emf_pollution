@@ -86,13 +86,18 @@ async function blobPut(key: string, value: string): Promise<void> {
     memStore[key] = value
     return
   }
-  const { put } = await import('@vercel/blob')
-  const blob = await put(key, value, {
-    access: 'public',
-    contentType: 'application/json',
-    addRandomSuffix: false,
-  })
-  urlCache[key] = blob.url  // cache URL for immediate reads in same instance
+  try {
+    const { put } = await import('@vercel/blob')
+    const blob = await put(key, value, {
+      access: 'public',
+      contentType: 'application/json',
+      addRandomSuffix: false,
+    })
+    urlCache[key] = blob.url
+  } catch (e) {
+    console.error(`blobPut(${key}) FAILED:`, e)
+    memStore[key] = value  // fallback so app keeps running
+  }
 }
 
 // ── Generic helpers ───────────────────────────────────────────
