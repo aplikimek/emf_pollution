@@ -145,8 +145,15 @@ export async function upsertClerkUser(profile: {
   const users = await getUsers()
   const existing = users.find(u => u.clerkId === profile.clerkId)
   if (existing) {
-    Object.assign(existing, { name: profile.name, image: profile.image, email: profile.email })
-    await writeJSON('users.json', users)
+    // Only write to Blob if profile data actually changed — avoids overwriting
+    // role updates made by admin (read-modify-write race condition on every login).
+    const changed = existing.name !== profile.name ||
+                    existing.image !== profile.image ||
+                    existing.email !== profile.email
+    if (changed) {
+      Object.assign(existing, { name: profile.name, image: profile.image, email: profile.email })
+      await writeJSON('users.json', users)
+    }
     return existing
   }
   const isFirst = users.length === 0

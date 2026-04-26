@@ -18,8 +18,13 @@ export default function AdminUsersClient({ currentUserId, projectCount }: { curr
 
   async function changeRole(userId: string, role: string) {
     setSaving(userId)
-    await fetch('/api/admin/users', { method:'PATCH', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ userId, role }) })
-    setUsers(prev => prev.map(u => u.id === userId ? { ...u, role } : u))
+    const res = await fetch('/api/admin/users', { method:'PATCH', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ userId, role }) })
+    if (res.ok) {
+      setUsers(prev => prev.map(u => u.id === userId ? { ...u, role } : u))
+    } else {
+      const err = await res.json().catch(() => ({}))
+      alert('Gabim: ' + (err.error ?? res.status))
+    }
     setSaving(null)
   }
 
