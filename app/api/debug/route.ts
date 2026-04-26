@@ -9,7 +9,7 @@ export async function GET() {
 
     // Write test
     const blob = await put('_test.json', JSON.stringify({ ok: true, ts: Date.now() }), {
-      access: 'public', contentType: 'application/json', addRandomSuffix: false,
+      access: 'private', contentType: 'application/json', addRandomSuffix: false,
     })
 
     // Read back via list
