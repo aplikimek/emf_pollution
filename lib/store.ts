@@ -60,13 +60,10 @@ const urlCache: Record<string, string> = {}  // key → blob URL (per-instance)
 async function blobGet(key: string): Promise<string | null> {
   if (!process.env.BLOB_READ_WRITE_TOKEN) return memStore[key] ?? null
   try {
-    const token = process.env.BLOB_READ_WRITE_TOKEN!
-    const headers = { Authorization: `Bearer ${token}` }
-
     // Use cached URL from a previous put in this instance
     const cached = urlCache[key]
     if (cached) {
-      const r = await fetch(cached, { cache: 'no-store', headers })
+      const r = await fetch(cached, { cache: 'no-store' })
       if (r.ok) return r.text()
     }
     // List all blobs and find exact match
@@ -75,7 +72,7 @@ async function blobGet(key: string): Promise<string | null> {
     const blob = blobs.find(b => b.pathname === key)
     if (!blob) return null
     urlCache[key] = blob.url
-    const r = await fetch(blob.url, { cache: 'no-store', headers })
+    const r = await fetch(blob.url, { cache: 'no-store' })
     if (!r.ok) return null
     return r.text()
   } catch (e) {
@@ -92,7 +89,7 @@ async function blobPut(key: string, value: string): Promise<void> {
   try {
     const { put } = await import('@vercel/blob')
     const blob = await put(key, value, {
-      access: 'private',
+      access: 'public',
       contentType: 'application/json',
       addRandomSuffix: false,
     })
