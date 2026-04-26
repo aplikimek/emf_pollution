@@ -19,3 +19,12 @@ body { background: #04080f; color: #a8c8e0; font-family: 'IBM Plex Mono', monosp
 .emf-popup .leaflet-popup-content { margin: 0 !important; }
 .emf-popup .leaflet-popup-tip-container { display: none; }
 .leaflet-popup-close-button { color: #305070 !important; top: 6px !important; right: 8px !important; }
+.project-card {
+  background: #080f1a; border: 1px solid #18304e; border-radius: 12px;
+  padding: 1.25rem; text-decoration: none; display: block;
+  transition: border-color 0.2s, box-shadow 0.2s; cursor: pointer;
+}
+.project-card:hover {
+  border-color: rgba(245,200,66,0.35);
+  box-shadow: 0 0 24px rgba(245,200,66,0.05);
+}

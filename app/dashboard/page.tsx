@@ -13,7 +13,6 @@ export default async function DashboardPage() {
   const S = {
     page:  { padding:'1.5rem', maxWidth:1100, margin:'0 auto' },
     stat:  { background:'#080f1a', border:'1px solid #18304e', borderRadius:12, padding:'1.25rem' },
-    card:  { background:'#080f1a', border:'1px solid #18304e', borderRadius:12, padding:'1.25rem', textDecoration:'none', display:'block', transition:'all 0.2s', cursor:'pointer' },
   }
 
   return (
@@ -59,9 +58,7 @@ export default async function DashboardPage() {
       ) : (
         <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))', gap:'1rem' }}>
           {projects.map(p => (
-            <Link key={p.id} href={`/project/${p.id}`} style={S.card as any}
-              onMouseEnter={e=>{(e.currentTarget).style.borderColor='rgba(245,200,66,0.35)';(e.currentTarget).style.boxShadow='0 0 24px rgba(245,200,66,0.05)'}}
-              onMouseLeave={e=>{(e.currentTarget).style.borderColor='#18304e';(e.currentTarget).style.boxShadow='none'}}>
+            <Link key={p.id} href={`/project/${p.id}`} className="project-card">
               <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:10 }}>
                 <div style={{ width:36, height:36, borderRadius:10, background:'#0c1526', border:'1px solid #18304e', display:'flex', alignItems:'center', justifyContent:'center', fontSize:18 }}>🗺</div>
                 <span style={{ fontSize:10, color:'#305070', background:'#0c1526', padding:'3px 8px', borderRadius:20, border:'1px solid #18304e' }}>{p.frequency} GHz</span>
