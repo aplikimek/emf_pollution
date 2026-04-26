@@ -185,12 +185,9 @@ export async function getProjects(): Promise<Project[]> {
   return readJSON<Project[]>('projects.json', [])
 }
 
-export async function getProjectsForUser(userId: string, role: Role): Promise<Project[]> {
+export async function getProjectsForUser(_userId: string, _role: Role): Promise<Project[]> {
   const all = await getProjects()
-  if (role === 'admin') return all.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
-  return all
-    .filter(p => p.ownerId === userId || p.memberIds.includes(userId))
-    .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
+  return all.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
 }
 
 export async function getProjectById(id: string): Promise<Project | null> {
@@ -251,9 +248,8 @@ export function getEffectiveProjectRole(
   return project.memberRoles[userId] ?? 'viewer'
 }
 
-export function canAccessProject(project: Project, userId: string, userRole: Role): boolean {
-  if (userRole === 'admin') return true
-  return project.ownerId === userId || project.memberIds.includes(userId)
+export function canAccessProject(_project: Project, _userId: string, _userRole: Role): boolean {
+  return true  // all authenticated users see all projects; editing is controlled by projectRole
 }
 
 // ═══════════════════════════════════════════════════════════════
