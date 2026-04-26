@@ -128,16 +128,16 @@ export default function ProjectClient({ project, initMeasurements, user, project
 
         {/* Map */}
         <div style={{ flex:1,display:tab==='map'?'flex':'none',flexDirection:'column',position:'relative' }}>
-          <div style={{ position:'absolute',top:10,right:10,zIndex:1000,display:'flex',alignItems:'center',gap:8,background:'rgba(8,15,26,0.92)',border:'1px solid #18304e',borderRadius:12,padding:'6px 12px',backdropFilter:'blur(4px)' }}>
-            <select value={method} onChange={e=>setMethod(e.target.value as any)} style={{ background:'transparent',color:'#a8c8e0',border:'none',outline:'none',fontSize:11,cursor:'pointer' }}>
-              {[['idw','IDW'],['nn','Nearest Neighbor'],['kriging','Kriging'],['rbf','RBF Gaussian']].map(([v,l])=><option key={v} value={v}>{l}</option>)}
-            </select>
-            <span style={{ color:'#18304e' }}>|</span>
+          <div style={{ position:'absolute',top:10,right:10,zIndex:1000,display:'flex',alignItems:'center',gap:6,background:'rgba(4,8,15,0.88)',border:'1px solid #18304e',borderRadius:12,padding:'6px 10px',backdropFilter:'blur(6px)' }}>
+            {([['idw','IDW'],['nn','NN'],['kriging','Kriging'],['rbf','RBF']] as const).map(([v,l])=>(
+              <button key={v} onClick={()=>setMethod(v as any)} style={{ padding:'3px 9px',borderRadius:6,border:`1px solid ${method===v?'rgba(245,200,66,0.5)':'rgba(255,255,255,0.08)'}`,background:method===v?'rgba(245,200,66,0.18)':'transparent',color:method===v?'#f5c842':'#6080a0',fontSize:10,fontWeight:method===v?700:400,letterSpacing:.5,cursor:'pointer',transition:'all 0.15s' }}>{l}</button>
+            ))}
+            <span style={{ color:'#18304e',margin:'0 2px' }}>|</span>
             <span style={{ color:'#305070',fontSize:10 }}>p</span>
-            <input type="range" min={1} max={5} step={0.5} value={power} onChange={e=>setPower(+e.target.value)} style={{ width:56,accentColor:'#f5c842' }} />
+            <input type="range" min={1} max={5} step={0.5} value={power} onChange={e=>setPower(+e.target.value)} style={{ width:50,accentColor:'#f5c842' }} />
             <span style={{ color:'#f5c842',fontSize:10,minWidth:14 }}>{power}</span>
-            <span style={{ color:'#18304e' }}>|</span>
-            <input type="range" min={30} max={150} step={10} value={res} onChange={e=>setRes(+e.target.value)} style={{ width:56,accentColor:'#f5c842' }} />
+            <span style={{ color:'#18304e',margin:'0 2px' }}>|</span>
+            <input type="range" min={30} max={150} step={10} value={res} onChange={e=>setRes(+e.target.value)} style={{ width:50,accentColor:'#f5c842' }} />
             <span style={{ color:'#f5c842',fontSize:10,minWidth:20 }}>{res}px</span>
           </div>
           <GISMap measurements={meas} project={project} activeField={field} method={method} idwPower={power} resolution={res} limit={limit} onGridComputed={(g,m)=>{setGrid(g);setMeta(m)}} />
