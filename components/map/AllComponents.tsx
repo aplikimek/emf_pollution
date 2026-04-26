@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { Measurement, Project } from '@/lib/store'
 import { eH } from '@/components/charts/StatsCharts'
 
@@ -210,8 +210,8 @@ export function MembersModal({projectId,ownerId,currentUserId,onClose}:{projectI
   const [sel,setSel]=useState('')
   const [role,setRole]=useState<'editor'|'viewer'>('viewer')
   const [loading,setLoading]=useState(false)
-  useState(()=>{fetch(`/api/projects/${projectId}`).then(r=>r.json()).then(d=>{setMembers(d.members||[]);setAvailable(d.available||[])})})
-  async function add(){if(!sel)return;setLoading(true);await fetch(`/api/projects/${projectId}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'add',userId:sel,role})});const r=await fetch(`/api/projects/${projectId}`);const d=await r.json();setMembers(d.members||[]);setSel('');setLoading(false)}
+  useEffect(()=>{fetch(`/api/projects/${projectId}`).then(r=>r.json()).then(d=>{setMembers(d.members||[]);setAvailable(d.available||[])})}, [projectId])
+  async function add(){if(!sel)return;setLoading(true);await fetch(`/api/projects/${projectId}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'add',userId:sel,role})});const r=await fetch(`/api/projects/${projectId}`);const d=await r.json();setMembers(d.members||[]);setAvailable(d.available||[]);setSel('');setLoading(false)}
   async function rem(uid:string){await fetch(`/api/projects/${projectId}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'remove',userId:uid})});setMembers(prev=>prev.filter((m:any)=>m.userId!==uid))}
   const card={background:'#080f1a',border:'1px solid #18304e',borderRadius:16,padding:'1.5rem',width:'100%',maxWidth:480,maxHeight:'80vh',overflowY:'auto' as const}
   const inp={background:'#0c1526',border:'1px solid #18304e',borderRadius:8,padding:'6px 10px',color:'#a8c8e0',fontSize:11,outline:'none',cursor:'pointer'}
