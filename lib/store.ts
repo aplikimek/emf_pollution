@@ -53,22 +53,30 @@ export interface Measurement {
   createdAt: string
 }
 
-// ── In-memory fallback ────────────────────────────────────────
+// ── In-memory fallback + URL cache ───────────────────────────
 const memStore: Record<string, string> = {}
+const urlCache: Record<string, string> = {}  // key → blob URL (per-instance)
 
 async function blobGet(key: string): Promise<string | null> {
-  if (!process.env.BLOB_READ_WRITE_TOKEN) {
-    return memStore[key] ?? null
-  }
+  if (!process.env.BLOB_READ_WRITE_TOKEN) return memStore[key] ?? null
   try {
+    // Use cached URL from a previous put in this instance
+    const cached = urlCache[key]
+    if (cached) {
+      const r = await fetch(cached, { cache: 'no-store' })
+      if (r.ok) return r.text()
+    }
+    // List all blobs and find exact match (handles any suffix variants)
     const { list } = await import('@vercel/blob')
-    const { blobs } = await list({ prefix: key, limit: 1 })
+    const { blobs } = await list({ limit: 200 })
     const blob = blobs.find(b => b.pathname === key)
     if (!blob) return null
-    const res = await fetch(blob.url, { cache: 'no-store' })
-    if (!res.ok) return null
-    return res.text()
-  } catch {
+    urlCache[key] = blob.url
+    const r = await fetch(blob.url, { cache: 'no-store' })
+    if (!r.ok) return null
+    return r.text()
+  } catch (e) {
+    console.error(`blobGet(${key}):`, e)
     return memStore[key] ?? null
   }
 }
@@ -78,16 +86,13 @@ async function blobPut(key: string, value: string): Promise<void> {
     memStore[key] = value
     return
   }
-  try {
-    const { put } = await import('@vercel/blob')
-    await put(key, value, {
-      access: 'public',
-      contentType: 'application/json',
-      addRandomSuffix: false,
-    })
-  } catch {
-    memStore[key] = value
-  }
+  const { put } = await import('@vercel/blob')
+  const blob = await put(key, value, {
+    access: 'public',
+    contentType: 'application/json',
+    addRandomSuffix: false,
+  })
+  urlCache[key] = blob.url  // cache URL for immediate reads in same instance
 }
 
 // ── Generic helpers ───────────────────────────────────────────
