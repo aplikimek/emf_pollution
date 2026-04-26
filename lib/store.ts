@@ -18,7 +18,7 @@ export interface User {
   name: string
   image: string | null
   role: Role
-  googleId: string
+  clerkId: string
   createdAt: string
 }
 
@@ -114,9 +114,9 @@ export async function getUsers(): Promise<User[]> {
   return readJSON<User[]>('users.json', [])
 }
 
-export async function getUserByGoogleId(googleId: string): Promise<User | null> {
+export async function getUserByClerkId(clerkId: string): Promise<User | null> {
   const users = await getUsers()
-  return users.find(u => u.googleId === googleId) ?? null
+  return users.find(u => u.clerkId === clerkId) ?? null
 }
 
 export async function getUserById(id: string): Promise<User | null> {
@@ -129,18 +129,16 @@ export async function getUserByEmail(email: string): Promise<User | null> {
   return users.find(u => u.email === email) ?? null
 }
 
-export async function upsertGoogleUser(profile: {
-  googleId: string; email: string; name: string; image: string | null
+export async function upsertClerkUser(profile: {
+  clerkId: string; email: string; name: string; image: string | null
 }): Promise<User> {
   const users = await getUsers()
-  const existing = users.find(u => u.googleId === profile.googleId)
+  const existing = users.find(u => u.clerkId === profile.clerkId)
   if (existing) {
-    // Update name/image in case they changed
     Object.assign(existing, { name: profile.name, image: profile.image, email: profile.email })
     await writeJSON('users.json', users)
     return existing
   }
-  // First ever user becomes admin
   const isFirst = users.length === 0
   const user: User = {
     id: uid(),
@@ -148,7 +146,7 @@ export async function upsertGoogleUser(profile: {
     name: profile.name,
     image: profile.image,
     role: isFirst ? 'admin' : 'viewer',
-    googleId: profile.googleId,
+    clerkId: profile.clerkId,
     createdAt: new Date().toISOString(),
   }
   users.push(user)
