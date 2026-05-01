@@ -43,6 +43,7 @@ export default function ProjectClient({ project, initMeasurements, user, project
   const [upl,    setUpl]    = useState(false)
   const [uplMsg, setUplMsg] = useState('')
   const [showM,  setShowM]  = useState(false)
+  const [confirmClear, setConfirmClear] = useState(false)
   const [field,  setField]  = useState<'emax'|'eavg'|'emin'>('emax')
   const [method, setMethod] = useState<'idw'|'nn'|'kriging'|'rbf'>('idw')
   const [power,  setPower]  = useState(2)
@@ -76,12 +77,12 @@ export default function ProjectClient({ project, initMeasurements, user, project
           eavgVm: Number(r[fi(['eavg','e_avg'])||'']||0),
           eminVm: Number(r[fi(['emin','e_min'])||'']||0),
         })).filter((r:any)=>!isNaN(r.lat)&&!isNaN(r.lon)&&r.emaxVm>0)
-        setUplMsg(`Po ruhen ${body.length} matje...`)
-        const res = await fetch(`/api/measurements/${project.id}`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) })
+        setUplMsg(`Po zëvendësohen me ${body.length} matje...`)
+        const res = await fetch(`/api/measurements/${project.id}`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ replace:true, rows:body }) })
         const data = await res.json()
         if (!res.ok) { setUplMsg(`⚠ ${data.error}`); setUpl(false); return }
-        setMeas(prev=>[...data,...prev])
-        setUplMsg(`✓ ${data.length} matje u ruajtën`)
+        setMeas(data)
+        setUplMsg(`✓ ${data.length} matje nga CSV`)
         setUpl(false); setTimeout(()=>setUplMsg(''),4000)
         e.target.value=''
       }
@@ -91,6 +92,15 @@ export default function ProjectClient({ project, initMeasurements, user, project
   async function handleDelete(id: string) {
     await fetch(`/api/measurements/${project.id}`, { method:'DELETE', headers:{'Content-Type':'application/json'}, body:JSON.stringify({measurementId:id}) })
     setMeas(prev=>prev.filter(m=>m.id!==id))
+  }
+
+  async function handleClearAll() {
+    setConfirmClear(false)
+    setUplMsg('Po fshihen të gjitha matjet...')
+    await fetch(`/api/measurements/${project.id}`, { method:'DELETE', headers:{'Content-Type':'application/json'}, body:JSON.stringify({all:true}) })
+    setMeas([])
+    setUplMsg('✓ Të gjitha matjet u fshinë')
+    setTimeout(()=>setUplMsg(''),3000)
   }
 
   // ── Shared styles ─────────────────────────────────────────
@@ -114,9 +124,18 @@ export default function ProjectClient({ project, initMeasurements, user, project
           {uplMsg && <span style={{ fontSize:11,padding:'3px 10px',borderRadius:20,background:uplMsg.startsWith('⚠')?'var(--red-tint)':'var(--green-tint)',color:uplMsg.startsWith('⚠')?'var(--red)':'var(--green)' }}>{uplMsg}</span>}
           {canEdit && (
             <label style={{ display:'flex',alignItems:'center',gap:6,padding:'5px 12px',border:'1px solid var(--blue-border)',borderRadius:8,color:'var(--blue)',fontSize:11,cursor:upl?'not-allowed':'pointer',opacity:upl?0.5:1 }}>
-              ⬆ {upl?'Ngarkim...':'Ngarko CSV'}
+              ⬆ {upl?'Ngarkim...':'Ngarko CSV (zëvendëso)'}
               <input type="file" accept=".csv" style={{ display:'none' }} onChange={handleCSV} disabled={upl} />
             </label>
+          )}
+          {canEdit && meas.length > 0 && (
+            confirmClear
+              ? <span style={{ display:'flex',alignItems:'center',gap:4 }}>
+                  <span style={{ fontSize:10,color:'var(--red)' }}>Fshi {meas.length} matje?</span>
+                  <button onClick={handleClearAll} style={{ padding:'4px 10px',border:'1px solid var(--red-border)',borderRadius:7,background:'var(--red-tint)',color:'var(--red)',fontSize:11,cursor:'pointer' }}>Po</button>
+                  <button onClick={()=>setConfirmClear(false)} style={{ padding:'4px 10px',border:'1px solid var(--border)',borderRadius:7,background:'none',color:'var(--dim)',fontSize:11,cursor:'pointer' }}>Jo</button>
+                </span>
+              : <button onClick={()=>setConfirmClear(true)} style={{ padding:'5px 10px',border:'1px solid var(--border)',borderRadius:8,color:'var(--dim)',fontSize:11,background:'none',cursor:'pointer' }}>🗑 Pastro</button>
           )}
           {isOwner && (
             <button onClick={()=>setShowM(true)} style={{ padding:'5px 12px',border:'1px solid var(--border)',borderRadius:8,color:'var(--dim)',fontSize:11,background:'none',cursor:'pointer' }}>👥 Members</button>

@@ -279,6 +279,13 @@ export async function deleteMeasurement(projectId: string, measurementId: string
   await writeJSON(`measurements/${projectId}.json`, all.filter(m => m.id !== measurementId))
 }
 
+export async function clearMeasurements(projectId: string): Promise<void> {
+  await writeJSON(`measurements/${projectId}.json`, [])
+  const projects = await getProjects()
+  const project = projects.find(p => p.id === projectId)
+  if (project) { project.updatedAt = new Date().toISOString(); await writeJSON('projects.json', projects) }
+}
+
 // ═══════════════════════════════════════════════════════════════
 // SETTINGS
 // ═══════════════════════════════════════════════════════════════

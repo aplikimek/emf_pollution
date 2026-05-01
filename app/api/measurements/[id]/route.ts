@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerUser } from '@/lib/auth'
-import { getProjectById, canAccessProject, getEffectiveProjectRole, getMeasurements, addMeasurements, deleteMeasurement } from '@/lib/store'
+import { getProjectById, canAccessProject, getEffectiveProjectRole, getMeasurements, addMeasurements, deleteMeasurement, clearMeasurements } from '@/lib/store'
 
 type P = { params: Promise<{ id: string }> }
 
@@ -23,7 +23,9 @@ export async function POST(req: NextRequest, { params }: P) {
   const role = getEffectiveProjectRole(project, user.id, user.role)
   if (role === 'viewer') return NextResponse.json({ error: 'Forbidden — viewer' }, { status: 403 })
 
-  const rows = await req.json()
+  const body = await req.json()
+  const replace = body?.replace === true
+  const rows = Array.isArray(body) ? body : (body?.rows ?? [])
   if (!Array.isArray(rows) || !rows.length)
     return NextResponse.json({ error: 'Array i zbrazët' }, { status: 400 })
 
@@ -41,6 +43,7 @@ export async function POST(req: NextRequest, { params }: P) {
     eminVm:       Number(r.eminVm),
   })).filter((r: any) => !isNaN(r.lat) && !isNaN(r.lon) && r.emaxVm > 0)
 
+  if (replace) await clearMeasurements(id)
   const inserted = await addMeasurements(id, toInsert)
   return NextResponse.json(inserted, { status: 201 })
 }
@@ -53,7 +56,11 @@ export async function DELETE(req: NextRequest, { params }: P) {
   if (!project) return NextResponse.json({ error: 'Not found' }, { status: 404 })
   const role = getEffectiveProjectRole(project, user.id, user.role)
   if (role === 'viewer') return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
-  const { measurementId } = await req.json()
-  await deleteMeasurement(id, measurementId)
+  const body = await req.json()
+  if (body?.all === true) {
+    await clearMeasurements(id)
+    return NextResponse.json({ ok: true })
+  }
+  await deleteMeasurement(id, body.measurementId)
   return NextResponse.json({ ok: true })
 }
