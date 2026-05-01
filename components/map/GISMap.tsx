@@ -1,7 +1,17 @@
 'use client'
 import { useEffect, useRef } from 'react'
-import type { Map as LMap, ImageOverlay, LayerGroup } from 'leaflet'
+import type { Map as LMap, ImageOverlay, LayerGroup, TileLayer } from 'leaflet'
 import type { Measurement, Project } from '@/lib/store'
+
+export type Basemap = 'dark' | 'streets' | 'satellite' | 'hybrid' | 'asig'
+
+function buildTileLayer(L: typeof import('leaflet'), bm: Basemap): TileLayer {
+  if (bm === 'streets')   return L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', { maxZoom:20, attribution:'© Google Maps' })
+  if (bm === 'satellite') return L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { maxZoom:20, attribution:'© Google Maps' })
+  if (bm === 'hybrid')    return L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', { maxZoom:20, attribution:'© Google Maps' })
+  if (bm === 'asig')      return L.tileLayer('https://di-albania-satellite1.img.arcgis.com/arcgis/rest/services/rgb/Albania_2025_L3/MapServer/tile/{z}/{y}/{x}', { maxZoom:20, attribution:'© Satelit Ortofoto Shqipëri 2025' })
+  return L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { attribution:'© CartoDB', subdomains:'abcd', maxZoom:20 })
+}
 
 function eRGB(e:number,lim:number):[number,number,number]{const t=Math.min(1.5,e/lim);const s:any=[[26,64,200],[32,192,104],[240,208,0],[224,88,32],[224,16,48]];const i=Math.min(Math.floor(t/0.375),s.length-2);const f=t/0.375-i;const a=s[i],b=s[i+1];return[a[0]+(b[0]-a[0])*f|0,a[1]+(b[1]-a[1])*f|0,a[2]+(b[2]-a[2])*f|0]}
 const eC=(e:number,lim:number,al=1)=>{const[r,g,b]=eRGB(e,lim);return `rgba(${r},${g},${b},${al})`}
@@ -19,14 +29,16 @@ const FK_MAP:Record<string,FK>={emax:'emaxVm',eavg:'eavgVm',emin:'eminVm'}
 interface Props {
   measurements:Measurement[];project:Project;activeField:'emax'|'eavg'|'emin'
   method:string;idwPower:number;resolution:number;limit:number
+  basemap:Basemap
   onGridComputed:(c:{lat:number;lon:number;val:number}[],m:Record<string,number>)=>void
 }
 
-export default function GISMap({measurements,project,activeField,method,idwPower,resolution,limit,onGridComputed}:Props){
+export default function GISMap({measurements,project,activeField,method,idwPower,resolution,limit,basemap,onGridComputed}:Props){
   const cRef=useRef<HTMLDivElement>(null)
   const mapRef=useRef<LMap|null>(null)
   const intRef=useRef<ImageOverlay|null>(null)
   const ptsRef=useRef<LayerGroup|null>(null)
+  const bmRef=useRef<TileLayer|null>(null)
   const stRef=useRef({measurements,method,idwPower,limit})
   useEffect(()=>{stRef.current={measurements,method,idwPower,limit}},[measurements,method,idwPower,limit])
 
@@ -34,7 +46,9 @@ export default function GISMap({measurements,project,activeField,method,idwPower
     if(mapRef.current||!cRef.current)return
     import('leaflet').then(L=>{
       const map=L.map(cRef.current!,{zoomControl:true}).setView([41.328,19.818],13)
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'© CartoDB',subdomains:'abcd',maxZoom:20}).addTo(map)
+      const initLayer=buildTileLayer(L,basemap)
+      initLayer.addTo(map)
+      bmRef.current=initLayer
       mapRef.current=map
       map.on('mousemove',e=>{const el=document.getElementById('cb');if(el)el.textContent=`lat: ${e.latlng.lat.toFixed(6)}  lon: ${e.latlng.lng.toFixed(6)}  ·  klik për parashikim`})
       map.on('click',e=>{
@@ -77,6 +91,15 @@ export default function GISMap({measurements,project,activeField,method,idwPower
     })
     return()=>{mapRef.current?.remove();mapRef.current=null}
   },[])
+
+  useEffect(()=>{
+    if(!mapRef.current)return
+    import('leaflet').then(L=>{
+      if(bmRef.current)mapRef.current!.removeLayer(bmRef.current)
+      bmRef.current=buildTileLayer(L,basemap)
+      bmRef.current.addTo(mapRef.current!)
+    })
+  },[basemap])
 
   useEffect(()=>{
     if(!mapRef.current)return

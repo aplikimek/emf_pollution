@@ -12,6 +12,8 @@ import MeasTable     from '@/components/map/MeasTable'
 import StatsCharts   from '@/components/charts/StatsCharts'
 import ReportsPanel  from '@/components/map/ReportsPanel'
 
+import type { Basemap } from '@/components/map/GISMap'
+
 const GISMap = dynamic(() => import('@/components/map/GISMap'), {
   ssr: false,
   loading: () => (
@@ -45,8 +47,9 @@ export default function ProjectClient({ project, initMeasurements, user, project
   const [method, setMethod] = useState<'idw'|'nn'|'kriging'|'rbf'>('idw')
   const [power,  setPower]  = useState(2)
   const [res,    setRes]    = useState(80)
-  const [grid,   setGrid]   = useState<{lat:number;lon:number;val:number}[]>([])
-  const [meta,   setMeta]   = useState<Record<string,number>>({})
+  const [grid,    setGrid]    = useState<{lat:number;lon:number;val:number}[]>([])
+  const [meta,    setMeta]    = useState<Record<string,number>>({})
+  const [basemap, setBasemap] = useState<Basemap>('dark')
 
   const canEdit = projectRole !== 'viewer'
   const isOwner = user.role === 'admin' || project.ownerId === user.id
@@ -130,6 +133,7 @@ export default function ProjectClient({ project, initMeasurements, user, project
 
         {/* Map */}
         <div style={{ flex:1,display:tab==='map'?'flex':'none',flexDirection:'column',position:'relative' }}>
+          {/* Interpolation controls - top right */}
           <div style={{ position:'absolute',top:10,right:10,zIndex:1000,display:'flex',alignItems:'center',gap:6,background:'rgba(4,8,15,0.88)',border:'1px solid #18304e',borderRadius:12,padding:'6px 10px',backdropFilter:'blur(6px)' }}>
             {([['idw','IDW'],['nn','NN'],['kriging','Kriging'],['rbf','RBF']] as const).map(([v,l])=>(
               <button key={v} onClick={()=>setMethod(v as any)} style={{ padding:'3px 9px',borderRadius:6,border:`1px solid ${method===v?'rgba(245,200,66,0.5)':'rgba(255,255,255,0.08)'}`,background:method===v?'rgba(245,200,66,0.18)':'transparent',color:method===v?'#f5c842':'#6080a0',fontSize:10,fontWeight:method===v?700:400,letterSpacing:.5,cursor:'pointer',transition:'all 0.15s' }}>{l}</button>
@@ -142,7 +146,22 @@ export default function ProjectClient({ project, initMeasurements, user, project
             <input type="range" min={30} max={150} step={10} value={res} onChange={e=>setRes(+e.target.value)} style={{ width:50,accentColor:'#f5c842' }} />
             <span style={{ color:'#f5c842',fontSize:10,minWidth:20 }}>{res}px</span>
           </div>
-          <GISMap measurements={meas} project={project} activeField={field} method={method} idwPower={power} resolution={res} limit={limit} onGridComputed={(g,m)=>{setGrid(g);setMeta(m)}} />
+          {/* Basemap selector - top left */}
+          <div style={{ position:'absolute',top:10,left:10,zIndex:1000,display:'flex',alignItems:'center',gap:4,background:'rgba(4,8,15,0.88)',border:'1px solid #18304e',borderRadius:12,padding:'6px 10px',backdropFilter:'blur(6px)' }}>
+            <span style={{ color:'#305070',fontSize:9,fontWeight:700,letterSpacing:1,marginRight:2 }}>HARTË</span>
+            {([
+              ['dark',      '🌑', 'Dark'],
+              ['streets',   '🗺', 'Google'],
+              ['satellite', '🛰', 'Satelit'],
+              ['hybrid',    '🌍', 'Hibrid'],
+              ['asig',      '🛸', 'Satelitore 2025'],
+            ] as const).map(([v,ico,lbl])=>(
+              <button key={v} onClick={()=>setBasemap(v)} title={lbl} style={{ padding:'3px 8px',borderRadius:6,border:`1px solid ${basemap===v?'rgba(56,192,245,0.5)':'rgba(255,255,255,0.08)'}`,background:basemap===v?'rgba(56,192,245,0.15)':'transparent',color:basemap===v?'#38c0f5':'#6080a0',fontSize:10,cursor:'pointer',transition:'all 0.15s',display:'flex',alignItems:'center',gap:3 }}>
+                <span style={{ fontSize:11 }}>{ico}</span><span style={{ fontWeight:basemap===v?700:400 }}>{lbl}</span>
+              </button>
+            ))}
+          </div>
+          <GISMap measurements={meas} project={project} activeField={field} method={method} idwPower={power} resolution={res} limit={limit} basemap={basemap} onGridComputed={(g,m)=>{setGrid(g);setMeta(m)}} />
         </div>
 
         {tab==='charts'  && <div style={{ flex:1,overflow:'auto',padding:'1rem' }}><StatsCharts measurements={meas} limit={limit} activeField={field} /></div>}

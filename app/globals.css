@@ -31,6 +31,35 @@
   --blue-border:     rgba(56,192,245,0.3);
 }
 
+/* ── Blue theme ─────────────────────────────────────────────── */
+[data-theme="blue"] {
+  --bg:              #010d1f;
+  --panel:           #051828;
+  --panel2:          #0a2240;
+  --border:          #103560;
+  --dim:             #2a6090;
+  --text:            #7ab4dc;
+  --text-strong:     #cce8f8;
+  --text-on-accent:  #000000;
+
+  --gold:            #f5c842;
+  --orange:          #f06030;
+  --green:           #20e898;
+  --blue:            #40ccff;
+  --red:             #f03060;
+
+  --gold-tint:       rgba(245,200,66,0.11);
+  --gold-border:     rgba(245,200,66,0.3);
+  --gold-glow:       rgba(245,200,66,0.07);
+  --gold-glow-b:     rgba(245,200,66,0.2);
+  --green-tint:      rgba(32,232,152,0.1);
+  --green-border:    rgba(32,232,152,0.3);
+  --red-tint:        rgba(240,48,96,0.1);
+  --red-border:      rgba(240,48,96,0.3);
+  --blue-tint:       rgba(64,204,255,0.12);
+  --blue-border:     rgba(64,204,255,0.35);
+}
+
 /* ── Light theme ─────────────────────────────────────────────── */
 [data-theme="light"] {
   --bg:              #f0f5f9;
@@ -88,11 +117,12 @@ body { background: var(--bg); color: var(--text); font-family: 'IBM Plex Mono', 
 .emf-popup .leaflet-popup-tip-container { display: none; }
 .leaflet-popup-close-button { color: #305070 !important; top: 6px !important; right: 8px !important; }
 
-/* ── Theme toggle button ─────────────────────────────────────── */
-.theme-toggle {
-  width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border);
-  background: var(--panel2); color: var(--dim); font-size: 15px;
+/* ── Theme buttons ───────────────────────────────────────────── */
+.theme-btn {
+  width: 28px; height: 28px; border-radius: 7px; border: 1px solid var(--border);
+  background: var(--panel2); color: var(--dim); font-size: 13px;
   cursor: pointer; display: flex; align-items: center; justify-content: center;
-  transition: border-color 0.15s, color 0.15s;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
 }
-.theme-toggle:hover { border-color: var(--gold-border); color: var(--gold); }
+.theme-btn--active { background: var(--gold-tint); border-color: var(--gold-border); color: var(--gold); }
+.theme-btn:hover:not(.theme-btn--active) { border-color: var(--gold-border); color: var(--gold); }

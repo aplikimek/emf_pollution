@@ -1,11 +1,27 @@
 'use client'
 import { useTheme } from './ThemeProvider'
+import type { Theme } from './ThemeProvider'
+
+const THEMES: { id: Theme; icon: string; title: string }[] = [
+  { id: 'dark',  icon: '🌑', title: 'Tema e errët' },
+  { id: 'blue',  icon: '🌊', title: 'Tema blu' },
+  { id: 'light', icon: '☀',  title: 'Tema e ndritshme' },
+]
 
 export default function ThemeToggle() {
-  const { theme, toggle } = useTheme()
+  const { theme, setTheme } = useTheme()
   return (
-    <button className="theme-toggle" onClick={toggle} title={theme === 'dark' ? 'Tema e ndritshme' : 'Tema e errët'}>
-      {theme === 'dark' ? '☀' : '🌙'}
-    </button>
+    <div style={{ display:'flex', gap:3 }}>
+      {THEMES.map(t => (
+        <button
+          key={t.id}
+          className={`theme-btn${theme === t.id ? ' theme-btn--active' : ''}`}
+          onClick={() => setTheme(t.id)}
+          title={t.title}
+        >
+          {t.icon}
+        </button>
+      ))}
+    </div>
   )
 }
