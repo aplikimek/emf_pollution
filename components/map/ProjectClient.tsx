@@ -14,6 +14,24 @@ import ReportsPanel  from '@/components/map/ReportsPanel'
 
 import type { Basemap } from '@/components/map/GISMap'
 
+const DEMO_ROWS = [
+  { locationName:'Sheshi Skënderbej', lat:41.3275, lon:19.8187, distanceM:50,  hightM:1.5, frequencyGhz:2.4, emaxVm:2.34, eavgVm:1.87, eminVm:1.42 },
+  { locationName:'Blloku',            lat:41.3198, lon:19.8172, distanceM:30,  hightM:1.5, frequencyGhz:2.4, emaxVm:3.12, eavgVm:2.54, eminVm:1.98 },
+  { locationName:'Rruga e Kavajës',   lat:41.3221, lon:19.8098, distanceM:40,  hightM:1.5, frequencyGhz:2.4, emaxVm:4.56, eavgVm:3.89, eminVm:3.21 },
+  { locationName:'Stadiumi Q.Stafa',  lat:41.3312, lon:19.8223, distanceM:60,  hightM:2.0, frequencyGhz:2.4, emaxVm:1.98, eavgVm:1.65, eminVm:1.23 },
+  { locationName:'Pazari i Ri',       lat:41.3289, lon:19.8134, distanceM:25,  hightM:1.5, frequencyGhz:2.4, emaxVm:5.23, eavgVm:4.12, eminVm:3.45 },
+  { locationName:'Universiteti',      lat:41.3167, lon:19.8189, distanceM:80,  hightM:1.5, frequencyGhz:2.4, emaxVm:2.87, eavgVm:2.34, eminVm:1.76 },
+  { locationName:'Parku Rinia',       lat:41.3254, lon:19.8201, distanceM:35,  hightM:1.5, frequencyGhz:2.4, emaxVm:1.54, eavgVm:1.23, eminVm:0.98 },
+  { locationName:'Myslym Shyri',      lat:41.3234, lon:19.8156, distanceM:20,  hightM:1.5, frequencyGhz:2.4, emaxVm:6.78, eavgVm:5.43, eminVm:4.12 },
+  { locationName:'Kinostudio',        lat:41.3345, lon:19.8267, distanceM:45,  hightM:2.0, frequencyGhz:2.4, emaxVm:2.12, eavgVm:1.78, eminVm:1.34 },
+  { locationName:'Komuna e Parisit',  lat:41.3178, lon:19.8134, distanceM:55,  hightM:1.5, frequencyGhz:2.4, emaxVm:3.45, eavgVm:2.87, eminVm:2.23 },
+  { locationName:'Rruga Fortuzi',     lat:41.3298, lon:19.8089, distanceM:30,  hightM:1.5, frequencyGhz:2.4, emaxVm:4.89, eavgVm:3.98, eminVm:3.12 },
+  { locationName:'Selvia',            lat:41.3267, lon:19.8245, distanceM:40,  hightM:1.5, frequencyGhz:2.4, emaxVm:2.67, eavgVm:2.12, eminVm:1.65 },
+  { locationName:'Vasil Shanto',      lat:41.3189, lon:19.8212, distanceM:35,  hightM:1.5, frequencyGhz:2.4, emaxVm:3.98, eavgVm:3.23, eminVm:2.56 },
+  { locationName:'Ali Demi',          lat:41.3156, lon:19.8298, distanceM:50,  hightM:2.0, frequencyGhz:2.4, emaxVm:1.87, eavgVm:1.54, eminVm:1.12 },
+  { locationName:'Laprake',           lat:41.3389, lon:19.8312, distanceM:65,  hightM:2.0, frequencyGhz:2.4, emaxVm:2.45, eavgVm:1.98, eminVm:1.56 },
+]
+
 const GISMap = dynamic(() => import('@/components/map/GISMap'), {
   ssr: false,
   loading: () => (
@@ -94,6 +112,16 @@ export default function ProjectClient({ project, initMeasurements, user, project
     setMeas(prev=>prev.filter(m=>m.id!==id))
   }
 
+  async function handleLoadDemo() {
+    setUplMsg('Po ngarkohen matjet demo...')
+    const res = await fetch(`/api/measurements/${project.id}`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ replace:true, rows:DEMO_ROWS }) })
+    const data = await res.json()
+    if (!res.ok) { setUplMsg(`⚠ ${data.error}`); return }
+    setMeas(data)
+    setUplMsg(`✓ ${data.length} matje demo u ngarkuan`)
+    setTimeout(()=>setUplMsg(''),4000)
+  }
+
   async function handleClearAll() {
     setConfirmClear(false)
     setUplMsg('Po fshihen të gjitha matjet...')
@@ -127,6 +155,11 @@ export default function ProjectClient({ project, initMeasurements, user, project
               ⬆ {upl?'Ngarkim...':'Ngarko CSV (zëvendëso)'}
               <input type="file" accept=".csv" style={{ display:'none' }} onChange={handleCSV} disabled={upl} />
             </label>
+          )}
+          {canEdit && (
+            <button onClick={handleLoadDemo} style={{ padding:'5px 10px',border:'1px solid var(--gold-border)',borderRadius:8,color:'var(--gold)',fontSize:11,background:'var(--gold-glow)',cursor:'pointer' }}>
+              📦 Demo
+            </button>
           )}
           {canEdit && meas.length > 0 && (
             confirmClear
